@@ -1,4 +1,5 @@
 import 'package:stormberry/stormberry.dart';
+part 'user.schema.dart';
 
 @Model(indexes: [
   TableIndex(name: 'email', columns: ['email'], unique: true),
