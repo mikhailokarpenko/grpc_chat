@@ -9,7 +9,7 @@ Future<void> startServer() async {
   runZonedGuarded(() async {
     final authServer = Server(
         [AuthRpc()], <Interceptor>[], CodecRegistry(codecs: [GzipCodec()]));
-    await authServer.serve(port: 4400);
+    await authServer.serve(port: 4401);
     log("Server listen port ${authServer.port}");
     db = initDatabase();
     db.open();
