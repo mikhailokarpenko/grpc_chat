@@ -8,6 +8,7 @@ import 'package:grpc/src/server/call.dart';
 import 'dart:async';
 
 import 'package:jaguar_jwt/jaguar_jwt.dart';
+import 'package:stormberry/stormberry.dart';
 
 class AuthRpc extends AuthRpcServiceBase {
   @override
@@ -30,7 +31,27 @@ class AuthRpc extends AuthRpcServiceBase {
 
   @override
   Future<TokensDto> signIn(ServiceCall call, UserDto request) async {
-    return Future(() => TokensDto(accessToken: "test", refreshToken: "test"));
+    if (db.connection().isClosed) {
+      db = initDatabase();
+    }
+    if (request.email.isEmpty) {
+      throw GrpcError.invalidArgument('Email not found');
+    }
+    if (request.password.isEmpty) {
+      throw GrpcError.invalidArgument('Password not found');
+    }
+
+    final hashPassword = Utils.getHashPassword(request.password);
+    final users = await db.users.queryUsers(QueryParams(
+        where: "email=@email",
+        values: {'email': Utils.encryptField(request.email)}));
+    if (users.isEmpty) throw GrpcError.notFound('User not found');
+    final user = users.first;
+    if (hashPassword != user.password) {
+      throw GrpcError.unauthenticated('Password is wrong');
+    }
+
+    return _createTokens(user.id.toString());
   }
 
   @override
