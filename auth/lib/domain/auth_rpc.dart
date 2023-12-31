@@ -24,9 +24,17 @@ class AuthRpc extends AuthRpcServiceBase {
   }
 
   @override
-  Future<TokensDto> refreshToken(ServiceCall call, TokensDto request) {
-    // TODO: implement refreshToken
-    throw UnimplementedError();
+  Future<TokensDto> refreshToken(ServiceCall call, TokensDto request) async {
+    if (db.connection().isClosed) {
+      db = initDatabase();
+    }
+    if (request.refreshToken.isEmpty) {
+      throw GrpcError.invalidArgument('Refresh token not found');
+    }
+    final id = Utils.getIdFromToken(request.refreshToken);
+    final user = await db.users.queryUser(id);
+    if (user == null) throw GrpcError.notFound('User not found');
+    return _createTokens(user.id);
   }
 
   @override
@@ -51,7 +59,7 @@ class AuthRpc extends AuthRpcServiceBase {
       throw GrpcError.unauthenticated('Password is wrong');
     }
 
-    return _createTokens(user.id.toString());
+    return _createTokens(user.id);
   }
 
   @override
@@ -74,7 +82,7 @@ class AuthRpc extends AuthRpcServiceBase {
         email: Utils.encryptField(request.email),
         password: Utils.getHashPassword(request.password)));
 
-    return _createTokens(id.toString());
+    return _createTokens(id);
   }
 
   @override
@@ -83,13 +91,13 @@ class AuthRpc extends AuthRpcServiceBase {
     throw UnimplementedError();
   }
 
-  TokensDto _createTokens(String id) {
+  TokensDto _createTokens(int id) {
     final accessTokenSet = JwtClaim(
         maxAge: Duration(hours: Env.accessTokenLife),
-        otherClaims: {'user_id': id});
+        otherClaims: {'user_id': id.toString()});
     final refreshTokenSet = JwtClaim(
         maxAge: Duration(hours: Env.refreshTokenLife),
-        otherClaims: {'user_id': id});
+        otherClaims: {'user_id': id.toString()});
 
     return TokensDto(
         accessToken: issueJwtHS256(accessTokenSet, Env.sk),

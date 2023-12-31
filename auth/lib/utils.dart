@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:auth/env.dart';
 import 'package:crypto/crypto.dart';
 import 'package:encrypt/encrypt.dart';
+import 'package:grpc/grpc.dart';
+import 'package:jaguar_jwt/jaguar_jwt.dart';
 
 abstract class Utils {
   static String getHashPassword(String password) {
@@ -17,5 +19,12 @@ abstract class Utils {
     return isDecode
         ? encrypter.decrypt64(value, iv: iv)
         : encrypter.encrypt(value, iv: iv).base64;
+  }
+
+  static int getIdFromToken(String token) {
+    final jwtClaim = verifyJwtHS256Signature(token, Env.sk);
+    final id = int.tryParse(jwtClaim['user_id']);
+    if (id == null) throw GrpcError.dataLoss('User ID not found');
+    return id;
   }
 }
