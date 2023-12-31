@@ -20,14 +20,18 @@ const UserDto$json = {
     {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
     {'1': 'username', '3': 2, '4': 1, '5': 9, '10': 'username'},
     {'1': 'email', '3': 3, '4': 1, '5': 9, '10': 'email'},
-    {'1': 'password', '3': 4, '4': 1, '5': 9, '10': 'password'},
+    {'1': 'password', '3': 4, '4': 1, '5': 9, '9': 0, '10': 'password', '17': true},
+  ],
+  '8': [
+    {'1': '_password'},
   ],
 };
 
 /// Descriptor for `UserDto`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List userDtoDescriptor = $convert.base64Decode(
     'CgdVc2VyRHRvEg4KAmlkGAEgASgJUgJpZBIaCgh1c2VybmFtZRgCIAEoCVIIdXNlcm5hbWUSFA'
-    'oFZW1haWwYAyABKAlSBWVtYWlsEhoKCHBhc3N3b3JkGAQgASgJUghwYXNzd29yZA==');
+    'oFZW1haWwYAyABKAlSBWVtYWlsEh8KCHBhc3N3b3JkGAQgASgJSABSCHBhc3N3b3JkiAEBQgsK'
+    'CV9wYXNzd29yZA==');
 
 @$core.Deprecated('Use tokensDtoDescriptor instead')
 const TokensDto$json = {

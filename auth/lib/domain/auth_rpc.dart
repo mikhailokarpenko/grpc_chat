@@ -18,9 +18,11 @@ class AuthRpc extends AuthRpcServiceBase {
   }
 
   @override
-  Future<UserDto> fetchUser(ServiceCall call, RequestDto request) {
-    // TODO: implement fetchUser
-    throw UnimplementedError();
+  Future<UserDto> fetchUser(ServiceCall call, RequestDto request) async {
+    final id = Utils.getIdFromMetadata(call);
+    final user = await db.users.queryUser(id);
+    if (user == null) throw GrpcError.notFound('User not found');
+    return Utils.convertUserDto(user);
   }
 
   @override

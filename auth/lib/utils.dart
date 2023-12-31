@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:auth/data/user/user.dart';
 import 'package:auth/env.dart';
+import 'package:auth/generated/auth.pbgrpc.dart';
 import 'package:crypto/crypto.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:grpc/grpc.dart';
@@ -27,4 +29,14 @@ abstract class Utils {
     if (id == null) throw GrpcError.dataLoss('User ID not found');
     return id;
   }
+
+  static int getIdFromMetadata(ServiceCall serviceCall) {
+    final accessToken = serviceCall.clientMetadata?['access_token'] ?? '';
+    return getIdFromToken(accessToken);
+  }
+
+  static UserDto convertUserDto(UserView user) => UserDto()
+    ..email = encryptField(user.email, isDecode: true)
+    ..id = user.id.toString()
+    ..username = user.username;
 }
