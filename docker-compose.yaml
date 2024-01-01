@@ -35,7 +35,7 @@ services:
       - '-c'
       - 'port=${db_port_auth}'
     volumes: # volume in order to save data when restarting the container
-      - db_auth_vol:/var/lib/postgres/data/ # docker writes from /var/lib/postgres/data/ to db_auth_vol
+      - db_auth_vol:/var/lib/postgresql/data/ # docker writes from /var/lib/postgresql/data/ to db_auth_vol
     networks:
       - server_net
 
@@ -52,7 +52,7 @@ services:
       - '-c'
       - 'port=${db_port_chats}'
     volumes: # volume in order to save data when restarting the container
-      - db_chats_vol:/var/lib/postgres/data/ # docker writes from /var/lib/postgres/data/ to db_auth_vol
+      - db_chats_vol:/var/lib/postgresql/data/ # docker writes from /var/lib/postgresql/data/ to db_chats_vol
     networks:
       - server_net
 
