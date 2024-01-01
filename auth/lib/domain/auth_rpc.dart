@@ -89,9 +89,18 @@ class AuthRpc extends AuthRpcServiceBase {
   }
 
   @override
-  Future<UserDto> updateUser(ServiceCall call, UserDto request) {
-    // TODO: implement updateUser
-    throw UnimplementedError();
+  Future<UserDto> updateUser(ServiceCall call, UserDto request) async {
+    final id = Utils.getIdFromMetadata(call);
+    await db.users.updateOne(UserUpdateRequest(
+        id: id,
+        username: request.username.isEmpty ? null : request.username,
+        email: request.email.isEmpty ? null : Utils.encryptField(request.email),
+        password: request.password.isEmpty
+            ? null
+            : Utils.getHashPassword(request.password)));
+    final user = await db.users.queryUser(id);
+    if (user == null) throw GrpcError.notFound('User not found');
+    return Utils.convertUserDto(user);
   }
 
   TokensDto _createTokens(int id) {
