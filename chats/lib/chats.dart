@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:developer';
-import 'package:chat/data/db.dart';
-import 'package:chat/data/grpc_interceptors.dart';
-import 'package:chat/env.dart';
+import 'package:chats/data/db.dart';
+import 'package:chats/data/grpc_interceptors.dart';
+import 'package:chats/env.dart';
 import 'package:grpc/grpc.dart';
 
 Future<void> startServer() async {

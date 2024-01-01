@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:chat/data/db.dart';
-import 'package:chat/env.dart';
+import 'package:chats/data/db.dart';
+import 'package:chats/env.dart';
 import 'package:grpc/grpc.dart';
 import 'package:jaguar_jwt/jaguar_jwt.dart';
 
