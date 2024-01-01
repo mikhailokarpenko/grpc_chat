@@ -1,4 +1,5 @@
 import 'package:chats/data/chat/chat.dart';
+import 'package:chats/data/message/message.dart';
 import 'package:chats/env.dart';
 import 'package:chats/generated/chats.pb.dart';
 import 'package:grpc/grpc.dart';
@@ -27,4 +28,17 @@ abstract class Utils {
       rethrow;
     }
   }
+
+  static ChatDto convertChatDto(ChatView chatView) {
+    return ChatDto(
+        id: chatView.id.toString(),
+        name: chatView.name,
+        authorId: chatView.authorId,
+        messages: [...chatView.messages.map((e) => convertMessageDto(e))]);
+  }
+
+  static MessageDto convertMessageDto(MessageView messageView) => MessageDto()
+    ..id = messageView.id.toString()
+    ..body = messageView.body
+    ..authorId = messageView.authorId;
 }

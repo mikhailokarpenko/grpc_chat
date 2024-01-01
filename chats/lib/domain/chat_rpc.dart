@@ -52,9 +52,17 @@ class ChatRpc extends ChatsRpcServiceBase {
   }
 
   @override
-  Future<ChatDto> fetchChat(ServiceCall call, ChatDto request) {
-    // TODO: implement fetchChat
-    throw UnimplementedError();
+  Future<ChatDto> fetchChat(ServiceCall call, ChatDto request) async {
+    final chatId = int.tryParse(request.id);
+    if (chatId == null) throw GrpcError.invalidArgument('Chat id not found');
+    final chat = await db.chats.queryChat(chatId);
+    if (chat == null) throw GrpcError.notFound('Chat not found');
+    final authorId = Utils.getIdFromMetadata(call);
+    if (chat.authorId == authorId.toString()) {
+      return await Isolate.run(() => Utils.convertChatDto(chat));
+    } else {
+      throw GrpcError.permissionDenied();
+    }
   }
 
   @override
