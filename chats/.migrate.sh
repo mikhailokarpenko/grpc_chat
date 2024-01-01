@@ -1,5 +1,5 @@
 DB_HOST_ADDRESS=localhost \
-DB_PORT=4500 \
+DB_PORT=4501 \
 DB_NAME=postgres \
 DB_SSL=false \
 DB_USERNAME=mike \
