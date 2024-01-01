@@ -2,6 +2,7 @@ import 'dart:isolate';
 
 import 'package:chats/data/chat/chat.dart';
 import 'package:chats/data/db.dart';
+import 'package:chats/data/message/message.dart';
 import 'package:chats/generated/chats.pbgrpc.dart';
 import 'package:chats/utils.dart';
 import 'package:grpc/grpc.dart';
@@ -24,7 +25,7 @@ class ChatRpc extends ChatsRpcServiceBase {
   Future<ResponseDto> deleteChat(ServiceCall call, ChatDto request) async {
     final authorId = Utils.getIdFromMetadata(call);
     final chatId = int.tryParse(request.id);
-    if (chatId == null) throw GrpcError.invalidArgument('Chat id not found');
+    if (chatId == null) throw GrpcError.invalidArgument('Chat id invalid');
     final chat = await db.chats.queryChat(chatId);
     if (chat == null) throw GrpcError.notFound('Chat not found');
     if (chat.authorId != authorId.toString()) {
@@ -54,7 +55,7 @@ class ChatRpc extends ChatsRpcServiceBase {
   @override
   Future<ChatDto> fetchChat(ServiceCall call, ChatDto request) async {
     final chatId = int.tryParse(request.id);
-    if (chatId == null) throw GrpcError.invalidArgument('Chat id not found');
+    if (chatId == null) throw GrpcError.invalidArgument('Chat id invalid');
     final chat = await db.chats.queryChat(chatId);
     if (chat == null) throw GrpcError.notFound('Chat not found');
     final authorId = Utils.getIdFromMetadata(call);
@@ -72,8 +73,15 @@ class ChatRpc extends ChatsRpcServiceBase {
   }
 
   @override
-  Future<ResponseDto> sendMessage(ServiceCall call, MessageDto request) {
-    // TODO: implement sendMessage
-    throw UnimplementedError();
+  Future<ResponseDto> sendMessage(ServiceCall call, MessageDto request) async {
+    final authorId = Utils.getIdFromMetadata(call);
+    final chatId = int.tryParse(request.chatId);
+    if (chatId == null) throw GrpcError.invalidArgument('Chat id invalid');
+    final chat = await db.chats.queryChat(chatId);
+    if (chat == null) throw GrpcError.notFound('Chat not found');
+    if (request.body.isEmpty) throw GrpcError.invalidArgument('Body is empty');
+    await db.messages.insertOne(MessageInsertRequest(
+        body: request.body, authorId: authorId.toString(), chatId: chatId));
+    return ResponseDto(message: 'Message sent');
   }
 }
