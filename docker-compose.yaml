@@ -17,7 +17,7 @@ services:
       DB_PORT: ${db_port_auth}
       DB_USERNAME: ${db_user_auth}
       DB_PASSWORD: ${db_password_auth}
-      DB_SSL: ${db_user_ssl}
+      DB_SSL: ${db_use_ssl}
       DB_SK: ${db_sk_auth}
       ACCESS_TOKEN_LIFE: 100
       REFRESH_TOKEN_LIFE: 200
@@ -39,9 +39,28 @@ services:
     networks:
       - server_net
 
+  db_chat:
+    container_name: db_chat
+    ports:
+      - ${db_port_chat}:${db_port_chat} #opened ports for the container
+    environment: #value that sends to our DB
+      POSTGRES_USER: ${db_user_chat}
+      POSTGRES_PASSWORD: ${db_password_chat}
+    image: postgres:13.12 #the image that uses the container from hub.docker.com/_/postgres/tags is a prepared database in the container
+    command: # command to set the port we want
+      - 'postgres'
+      - '-c'
+      - 'port=${db_port_chat}'
+    volumes: # volume in order to save data when restarting the container
+      - db_chat_vol:/var/lib/postgres/data/ # docker writes from /var/lib/postgres/data/ to db_auth_vol
+    networks:
+      - server_net
+
 # indicate which volumes and networks we will use
 volumes:
     db_auth_vol: {}
+    db_chat_vol: {}
+    
 networks:
     server_net:
       driver: bridge
