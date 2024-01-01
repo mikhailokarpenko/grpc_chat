@@ -1,9 +1,12 @@
+import 'dart:isolate';
+
 import 'package:chats/data/chat/chat.dart';
 import 'package:chats/data/db.dart';
 import 'package:chats/generated/chats.pbgrpc.dart';
 import 'package:chats/utils.dart';
 import 'package:grpc/grpc.dart';
 import 'package:grpc/src/server/call.dart';
+import 'package:stormberry/stormberry.dart';
 
 class ChatRpc extends ChatsRpcServiceBase {
   @override
@@ -30,9 +33,13 @@ class ChatRpc extends ChatsRpcServiceBase {
   }
 
   @override
-  Future<ListChatsDto> fetchAllChats(ServiceCall call, RequestDto request) {
-    // TODO: implement fetchAllChats
-    throw UnimplementedError();
+  Future<ListChatsDto> fetchAllChats(
+      ServiceCall call, RequestDto request) async {
+    final id = Utils.getIdFromMetadata(call);
+    final listChats = await db.chats.queryChats(
+        QueryParams(where: "author_id=@author_id", values: {'author_id': id}));
+    if (listChats.isEmpty) return ListChatsDto(chats: []);
+    return await Isolate.run(() => Utils.convertChats(listChats));
   }
 
   @override
