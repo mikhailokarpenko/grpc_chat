@@ -37,9 +37,21 @@ class ChatRpc extends ChatsRpcServiceBase {
   }
 
   @override
-  Future<ResponseDto> deleteMessage(ServiceCall call, MessageDto request) {
-    // TODO: implement deleteMessage
-    throw UnimplementedError();
+  Future<ResponseDto> deleteMessage(
+      ServiceCall call, MessageDto request) async {
+    final messageId = int.tryParse(request.id);
+    if (messageId == null) {
+      throw GrpcError.invalidArgument('Message id invalid');
+    }
+    final message = await db.messages.queryMessage(messageId);
+    if (message == null) throw GrpcError.notFound('Message not found');
+    final userId = Utils.getIdFromMetadata(call);
+    if (message.authorId == userId.toString()) {
+      await db.messages.deleteOne(messageId);
+      return ResponseDto(message: 'Message deleted');
+    } else {
+      throw GrpcError.permissionDenied('Only author can delete the message');
+    }
   }
 
   @override
