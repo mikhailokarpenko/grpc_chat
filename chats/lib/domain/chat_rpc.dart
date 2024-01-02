@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:isolate';
 
 import 'package:chats/data/chat/chat.dart';
@@ -7,9 +8,12 @@ import 'package:chats/generated/chats.pbgrpc.dart';
 import 'package:chats/utils.dart';
 import 'package:grpc/grpc.dart';
 import 'package:grpc/src/server/call.dart';
+import 'package:protobuf/protobuf.dart';
 import 'package:stormberry/stormberry.dart';
 
 class ChatRpc extends ChatsRpcServiceBase {
+  final StreamController<MessageDto> _streamController =
+      StreamController.broadcast();
   @override
   Future<ResponseDto> createChat(ServiceCall call, ChatDto request) async {
     final id = Utils.getIdFromMetadata(call);
@@ -86,9 +90,10 @@ class ChatRpc extends ChatsRpcServiceBase {
   }
 
   @override
-  Stream<MessageDto> listenChat(ServiceCall call, ChatDto request) {
-    // TODO: implement listenChat
-    throw UnimplementedError();
+  Stream<MessageDto> listenChat(ServiceCall call, ChatDto request) async* {
+    if (request.id.isEmpty) throw GrpcError.invalidArgument('Chat id is empty');
+    yield* _streamController.stream
+        .where((event) => event.chatId == request.id);
   }
 
   @override
@@ -99,8 +104,11 @@ class ChatRpc extends ChatsRpcServiceBase {
     final chat = await db.chats.queryShortView(chatId);
     if (chat == null) throw GrpcError.notFound('Chat not found');
     if (request.body.isEmpty) throw GrpcError.invalidArgument('Body is empty');
-    await db.messages.insertOne(MessageInsertRequest(
+    final id = await db.messages.insertOne(MessageInsertRequest(
         body: request.body, authorId: authorId.toString(), chatId: chatId));
+    _streamController.add(request.deepCopy()
+      ..authorId = authorId.toString()
+      ..id = id.toString());
     return ResponseDto(message: 'Message sent');
   }
 }
