@@ -39,4 +39,12 @@ abstract class Utils {
     ..email = encryptField(user.email, isDecode: true)
     ..id = user.id.toString()
     ..username = user.username;
+
+  static ListUsersDto convertUsersDto(List<UserView> users) {
+    try {
+      return ListUsersDto(users: [...users.map((e) => convertUserDto(e))]);
+    } catch (e) {
+      throw GrpcError.internal('Error in convertUsersDto ${e.toString()}');
+    }
+  }
 }
