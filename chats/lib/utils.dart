@@ -22,7 +22,10 @@ abstract class Utils {
     try {
       return ListChatsDto(chats: [
         ...list.map((chat) => ChatDto(
-            authorId: chat.authorId, id: chat.id.toString(), name: chat.name))
+            authorId: chat.authorId,
+            id: chat.id.toString(),
+            name: chat.name,
+            memberId: chat.memberId))
       ]);
     } catch (_) {
       rethrow;
@@ -34,7 +37,8 @@ abstract class Utils {
         id: chatView.id.toString(),
         name: chatView.name,
         authorId: chatView.authorId,
-        messages: [...chatView.messages.map((e) => convertMessageDto(e))]);
+        messages: [...chatView.messages.map((e) => convertMessageDto(e))],
+        memberId: chatView.memberId);
   }
 
   static MessageDto convertMessageDto(MessageView messageView) => MessageDto()

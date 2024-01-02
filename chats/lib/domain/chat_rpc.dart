@@ -16,8 +16,13 @@ class ChatRpc extends ChatsRpcServiceBase {
     if (request.name.isEmpty) {
       throw GrpcError.invalidArgument('Chat name is empty');
     }
+    if (request.memberId.isEmpty) {
+      throw GrpcError.invalidArgument('Member id is empty');
+    }
     await db.chats.insertOne(ChatInsertRequest(
-        name: request.name, authorId: id.toString(), memberId: ''));
+        name: request.name,
+        authorId: id.toString(),
+        memberId: request.memberId));
     return ResponseDto(message: 'Chat created');
   }
 
@@ -58,8 +63,9 @@ class ChatRpc extends ChatsRpcServiceBase {
   Future<ListChatsDto> fetchAllChats(
       ServiceCall call, RequestDto request) async {
     final id = Utils.getIdFromMetadata(call);
-    final listChats = await db.chats.queryShortViews(
-        QueryParams(where: "author_id=@author_id", values: {'author_id': id}));
+    final listChats = await db.chats.queryShortViews(QueryParams(
+        where: "author_id=@author_id OR member_id=@member_id",
+        values: {'author_id': id, 'member_id': id}));
     if (listChats.isEmpty) return ListChatsDto(chats: []);
     return await Isolate.run(() => Utils.convertChats(listChats));
   }
@@ -70,8 +76,9 @@ class ChatRpc extends ChatsRpcServiceBase {
     if (chatId == null) throw GrpcError.invalidArgument('Chat id invalid');
     final chat = await db.chats.queryFullView(chatId);
     if (chat == null) throw GrpcError.notFound('Chat not found');
-    final authorId = Utils.getIdFromMetadata(call);
-    if (chat.authorId == authorId.toString()) {
+    final userId = Utils.getIdFromMetadata(call);
+    if (chat.authorId == userId.toString() ||
+        chat.memberId == userId.toString()) {
       return await Isolate.run(() => Utils.convertChatDto(chat));
     } else {
       throw GrpcError.permissionDenied();
