@@ -18,7 +18,7 @@ abstract class Utils {
     return getIdFromToken(accessToken);
   }
 
-  static ListChatsDto convertChats(List<ChatView> list) {
+  static ListChatsDto convertChats(List<ShortChatView> list) {
     try {
       return ListChatsDto(chats: [
         ...list.map((chat) => ChatDto(
@@ -29,7 +29,7 @@ abstract class Utils {
     }
   }
 
-  static ChatDto convertChatDto(ChatView chatView) {
+  static ChatDto convertChatDto(FullChatView chatView) {
     return ChatDto(
         id: chatView.id.toString(),
         name: chatView.name,

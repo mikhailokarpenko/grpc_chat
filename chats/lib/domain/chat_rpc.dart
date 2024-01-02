@@ -26,7 +26,7 @@ class ChatRpc extends ChatsRpcServiceBase {
     final authorId = Utils.getIdFromMetadata(call);
     final chatId = int.tryParse(request.id);
     if (chatId == null) throw GrpcError.invalidArgument('Chat id invalid');
-    final chat = await db.chats.queryChat(chatId);
+    final chat = await db.chats.queryShortView(chatId);
     if (chat == null) throw GrpcError.notFound('Chat not found');
     if (chat.authorId != authorId.toString()) {
       throw GrpcError.permissionDenied('Only author can delete chat');
@@ -58,7 +58,7 @@ class ChatRpc extends ChatsRpcServiceBase {
   Future<ListChatsDto> fetchAllChats(
       ServiceCall call, RequestDto request) async {
     final id = Utils.getIdFromMetadata(call);
-    final listChats = await db.chats.queryChats(
+    final listChats = await db.chats.queryShortViews(
         QueryParams(where: "author_id=@author_id", values: {'author_id': id}));
     if (listChats.isEmpty) return ListChatsDto(chats: []);
     return await Isolate.run(() => Utils.convertChats(listChats));
@@ -68,7 +68,7 @@ class ChatRpc extends ChatsRpcServiceBase {
   Future<ChatDto> fetchChat(ServiceCall call, ChatDto request) async {
     final chatId = int.tryParse(request.id);
     if (chatId == null) throw GrpcError.invalidArgument('Chat id invalid');
-    final chat = await db.chats.queryChat(chatId);
+    final chat = await db.chats.queryFullView(chatId);
     if (chat == null) throw GrpcError.notFound('Chat not found');
     final authorId = Utils.getIdFromMetadata(call);
     if (chat.authorId == authorId.toString()) {
@@ -89,7 +89,7 @@ class ChatRpc extends ChatsRpcServiceBase {
     final authorId = Utils.getIdFromMetadata(call);
     final chatId = int.tryParse(request.chatId);
     if (chatId == null) throw GrpcError.invalidArgument('Chat id invalid');
-    final chat = await db.chats.queryChat(chatId);
+    final chat = await db.chats.queryShortView(chatId);
     if (chat == null) throw GrpcError.notFound('Chat not found');
     if (request.body.isEmpty) throw GrpcError.invalidArgument('Body is empty');
     await db.messages.insertOne(MessageInsertRequest(
