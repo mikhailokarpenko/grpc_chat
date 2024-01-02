@@ -16,8 +16,8 @@ class ChatRpc extends ChatsRpcServiceBase {
     if (request.name.isEmpty) {
       throw GrpcError.invalidArgument('Chat name is empty');
     }
-    await db.chats.insertOne(
-        ChatInsertRequest(name: request.name, authorId: id.toString()));
+    await db.chats.insertOne(ChatInsertRequest(
+        name: request.name, authorId: id.toString(), memberId: ''));
     return ResponseDto(message: 'Chat created');
   }
 
