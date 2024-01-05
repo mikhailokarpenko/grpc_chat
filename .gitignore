@@ -1,3 +1,4 @@
 .vscode
 auth/.migrate.sh
 .env
+chats/.migrate.sh
