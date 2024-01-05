@@ -70,8 +70,8 @@ services:
     networks:
       - server_net
 
-  nginx:
-    container_name: nginx
+  envoy:
+    container_name: envoy
     ports:
       - 8500:8500
     depends_on:
@@ -79,7 +79,7 @@ services:
       - chats
     networks:
       - server_net
-    build: ./nginx
+    build: ./envoy
 
 # indicate which volumes and networks we will use
 volumes:
