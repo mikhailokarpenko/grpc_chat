@@ -14,7 +14,7 @@ abstract class Utils {
   }
 
   static int getIdFromMetadata(ServiceCall call) {
-    final accessToken = call.clientMetadata?['access_token'] ?? '';
+    final accessToken = call.clientMetadata?['token'] ?? '';
     return getIdFromToken(accessToken);
   }
 

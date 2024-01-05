@@ -13,7 +13,7 @@ abstract class GrpcInterceptor {
 
     try {
       if (_excludeMethods.contains(method.name)) return null;
-      final token = call.clientMetadata?['access_token'] ?? '';
+      final token = call.clientMetadata?['token'] ?? '';
       final jwtClaim = verifyJwtHS256Signature(token, Env.sk);
       jwtClaim.validate();
       return null;

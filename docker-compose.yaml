@@ -6,8 +6,6 @@ services:
     build: ./auth
     depends_on:
       - db_auth
-    ports:
-      - ${auth_port}:${auth_port}
     networks:
       - server_net
     environment:
@@ -27,8 +25,6 @@ services:
     build: ./chats
     depends_on:
       - db_chats
-    ports:
-      - ${chats_port}:${chats_port}
     networks:
       - server_net
     environment:
@@ -73,6 +69,17 @@ services:
       - db_chats_vol:/var/lib/postgresql/data/ # docker writes from /var/lib/postgresql/data/ to db_chats_vol
     networks:
       - server_net
+
+  nginx:
+    container_name: nginx
+    ports:
+      - 8500:8500
+    depends_on:
+      - auth
+      - chats
+    networks:
+      - server_net
+    build: ./nginx
 
 # indicate which volumes and networks we will use
 volumes:
