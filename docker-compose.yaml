@@ -81,10 +81,24 @@ services:
       - server_net
     build: ./envoy
 
+  minio:
+    container_name: minio
+    image: bitnami/minio:2023.12.23
+    environment:
+      - MINIO_ROOT_USER=${files_access_key}
+      - MINIO_ROOT_PASSWORD=${files_secret_key}
+    ports:
+      - 9001:9001
+    networks:
+      - server_net
+    volumes:
+      - s3_vol:/data
+
 # indicate which volumes and networks we will use
 volumes:
     db_auth_vol: {}
     db_chats_vol: {}
+    s3_vol: {}
     
 networks:
     server_net:
