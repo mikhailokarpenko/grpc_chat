@@ -9,6 +9,12 @@ adduser mike
 usermod -aG sudo mike
 usermod -aG mike www-data
 
+# setup ssh for new user
+sudo cp -r /home/ubuntu/.ssh /home/mike/.ssh
+sudo chmod 700 /home/mike/.ssh/
+sudo chmod 600 /home/mike/.ssh/authorized_keys
+sudo chown -R mike:mike /home/mike/
+
 # Reebot
 reboot
 
