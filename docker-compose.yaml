@@ -37,7 +37,7 @@ services:
       DB_SSL: ${db_use_ssl}
 
   files:
-    container_name: 'files'
+    container_name: files
     build: ./files
     depends_on:
       - minio
@@ -45,6 +45,7 @@ services:
       - server_net
     environment:
       SK: ${sk}
+      files_port: ${files_port}
       files_access_key: ${files_access_key}
       files_secret_key: ${files_secret_key}
       files_use_ssl: ${files_use_ssl}
