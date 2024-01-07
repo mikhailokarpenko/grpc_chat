@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:files/domain/i_storage.dart';
 import 'package:files/generated/files.pbgrpc.dart';
+import 'package:files/utils.dart';
 import 'package:grpc/grpc.dart';
 import 'package:grpc/src/server/call.dart';
 
@@ -12,7 +13,7 @@ final class FilesRpc extends FilesRpcServiceBase {
   FilesRpc(this.storage);
 
   @override
-  Future<ResponseDto> deleteAvatar(ServiceCall call, AvatarDto request) {
+  Future<ResponseDto> deleteAvatar(ServiceCall call, FileDto request) {
     // TODO: implement deleteAvatar
     throw UnimplementedError();
   }
@@ -31,7 +32,7 @@ final class FilesRpc extends FilesRpcServiceBase {
   }
 
   @override
-  Future<AvatarDto> fetchAvatar(ServiceCall call, AvatarDto request) {
+  Future<FileDto> fetchAvatar(ServiceCall call, FileDto request) {
     // TODO: implement fetchAvatar
     throw UnimplementedError();
   }
@@ -64,9 +65,22 @@ final class FilesRpc extends FilesRpcServiceBase {
   }
 
   @override
-  Future<ResponseDto> putAvatar(ServiceCall call, AvatarDto request) {
-    // TODO: implement putAvatar
-    throw UnimplementedError();
+  Future<ResponseDto> putAvatar(ServiceCall call, FileDto request) async {
+    if (request.data.isEmpty) throw GrpcError.invalidArgument('File is empty');
+    if (request.data.length > 1000000) {
+      throw GrpcError.invalidArgument('File too large');
+    }
+    try {
+      final userId = Utils.getIdFromMetadata(call);
+      final tag = await storage.putFile(
+        bucket: 'avatars',
+        name: userId.toString(),
+        data: request.data as Uint8List,
+      );
+      return ResponseDto(isComplete: true, message: 'Avatar updated', tag: tag);
+    } catch (e) {
+      throw GrpcError.internal('Avatar not updated $e');
+    }
   }
 
   @override

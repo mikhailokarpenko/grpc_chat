@@ -105,56 +105,6 @@ class FileDto extends $pb.GeneratedMessage {
   void clearTag() => clearField(4);
 }
 
-class AvatarDto extends $pb.GeneratedMessage {
-  factory AvatarDto({
-    $core.List<$core.int>? data,
-  }) {
-    final $result = create();
-    if (data != null) {
-      $result.data = data;
-    }
-    return $result;
-  }
-  AvatarDto._() : super();
-  factory AvatarDto.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory AvatarDto.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'AvatarDto', createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, _omitFieldNames ? '' : 'data', $pb.PbFieldType.OY)
-    ..hasRequiredFields = false
-  ;
-
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  AvatarDto clone() => AvatarDto()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  AvatarDto copyWith(void Function(AvatarDto) updates) => super.copyWith((message) => updates(message as AvatarDto)) as AvatarDto;
-
-  $pb.BuilderInfo get info_ => _i;
-
-  @$core.pragma('dart2js:noInline')
-  static AvatarDto create() => AvatarDto._();
-  AvatarDto createEmptyInstance() => create();
-  static $pb.PbList<AvatarDto> createRepeated() => $pb.PbList<AvatarDto>();
-  @$core.pragma('dart2js:noInline')
-  static AvatarDto getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AvatarDto>(create);
-  static AvatarDto? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $core.List<$core.int> get data => $_getN(0);
-  @$pb.TagNumber(1)
-  set data($core.List<$core.int> v) { $_setBytes(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasData() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearData() => clearField(1);
-}
-
 class ResponseDto extends $pb.GeneratedMessage {
   factory ResponseDto({
     $core.String? message,

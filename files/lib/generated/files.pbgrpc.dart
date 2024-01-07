@@ -33,17 +33,17 @@ class FilesRpcClient extends $grpc.Client {
       '/FilesRpc/DeleteFile',
       ($0.FileDto value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.ResponseDto.fromBuffer(value));
-  static final _$putAvatar = $grpc.ClientMethod<$0.AvatarDto, $0.ResponseDto>(
+  static final _$putAvatar = $grpc.ClientMethod<$0.FileDto, $0.ResponseDto>(
       '/FilesRpc/PutAvatar',
-      ($0.AvatarDto value) => value.writeToBuffer(),
+      ($0.FileDto value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.ResponseDto.fromBuffer(value));
-  static final _$fetchAvatar = $grpc.ClientMethod<$0.AvatarDto, $0.AvatarDto>(
+  static final _$fetchAvatar = $grpc.ClientMethod<$0.FileDto, $0.FileDto>(
       '/FilesRpc/FetchAvatar',
-      ($0.AvatarDto value) => value.writeToBuffer(),
-      ($core.List<$core.int> value) => $0.AvatarDto.fromBuffer(value));
-  static final _$deleteAvatar = $grpc.ClientMethod<$0.AvatarDto, $0.ResponseDto>(
+      ($0.FileDto value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.FileDto.fromBuffer(value));
+  static final _$deleteAvatar = $grpc.ClientMethod<$0.FileDto, $0.ResponseDto>(
       '/FilesRpc/DeleteAvatar',
-      ($0.AvatarDto value) => value.writeToBuffer(),
+      ($0.FileDto value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.ResponseDto.fromBuffer(value));
 
   FilesRpcClient($grpc.ClientChannel channel,
@@ -64,15 +64,15 @@ class FilesRpcClient extends $grpc.Client {
     return $createUnaryCall(_$deleteFile, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.ResponseDto> putAvatar($0.AvatarDto request, {$grpc.CallOptions? options}) {
+  $grpc.ResponseFuture<$0.ResponseDto> putAvatar($0.FileDto request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$putAvatar, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.AvatarDto> fetchAvatar($0.AvatarDto request, {$grpc.CallOptions? options}) {
+  $grpc.ResponseFuture<$0.FileDto> fetchAvatar($0.FileDto request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$fetchAvatar, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.ResponseDto> deleteAvatar($0.AvatarDto request, {$grpc.CallOptions? options}) {
+  $grpc.ResponseFuture<$0.ResponseDto> deleteAvatar($0.FileDto request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$deleteAvatar, request, options: options);
   }
 }
@@ -103,26 +103,26 @@ abstract class FilesRpcServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.FileDto.fromBuffer(value),
         ($0.ResponseDto value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$0.AvatarDto, $0.ResponseDto>(
+    $addMethod($grpc.ServiceMethod<$0.FileDto, $0.ResponseDto>(
         'PutAvatar',
         putAvatar_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $0.AvatarDto.fromBuffer(value),
+        ($core.List<$core.int> value) => $0.FileDto.fromBuffer(value),
         ($0.ResponseDto value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$0.AvatarDto, $0.AvatarDto>(
+    $addMethod($grpc.ServiceMethod<$0.FileDto, $0.FileDto>(
         'FetchAvatar',
         fetchAvatar_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $0.AvatarDto.fromBuffer(value),
-        ($0.AvatarDto value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$0.AvatarDto, $0.ResponseDto>(
+        ($core.List<$core.int> value) => $0.FileDto.fromBuffer(value),
+        ($0.FileDto value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.FileDto, $0.ResponseDto>(
         'DeleteAvatar',
         deleteAvatar_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $0.AvatarDto.fromBuffer(value),
+        ($core.List<$core.int> value) => $0.FileDto.fromBuffer(value),
         ($0.ResponseDto value) => value.writeToBuffer()));
   }
 
@@ -138,22 +138,22 @@ abstract class FilesRpcServiceBase extends $grpc.Service {
     return deleteFile(call, await request);
   }
 
-  $async.Future<$0.ResponseDto> putAvatar_Pre($grpc.ServiceCall call, $async.Future<$0.AvatarDto> request) async {
+  $async.Future<$0.ResponseDto> putAvatar_Pre($grpc.ServiceCall call, $async.Future<$0.FileDto> request) async {
     return putAvatar(call, await request);
   }
 
-  $async.Future<$0.AvatarDto> fetchAvatar_Pre($grpc.ServiceCall call, $async.Future<$0.AvatarDto> request) async {
+  $async.Future<$0.FileDto> fetchAvatar_Pre($grpc.ServiceCall call, $async.Future<$0.FileDto> request) async {
     return fetchAvatar(call, await request);
   }
 
-  $async.Future<$0.ResponseDto> deleteAvatar_Pre($grpc.ServiceCall call, $async.Future<$0.AvatarDto> request) async {
+  $async.Future<$0.ResponseDto> deleteAvatar_Pre($grpc.ServiceCall call, $async.Future<$0.FileDto> request) async {
     return deleteAvatar(call, await request);
   }
 
   $async.Future<$0.ResponseDto> putFile($grpc.ServiceCall call, $0.FileDto request);
   $async.Stream<$0.FileDto> fetchFile($grpc.ServiceCall call, $0.FileDto request);
   $async.Future<$0.ResponseDto> deleteFile($grpc.ServiceCall call, $0.FileDto request);
-  $async.Future<$0.ResponseDto> putAvatar($grpc.ServiceCall call, $0.AvatarDto request);
-  $async.Future<$0.AvatarDto> fetchAvatar($grpc.ServiceCall call, $0.AvatarDto request);
-  $async.Future<$0.ResponseDto> deleteAvatar($grpc.ServiceCall call, $0.AvatarDto request);
+  $async.Future<$0.ResponseDto> putAvatar($grpc.ServiceCall call, $0.FileDto request);
+  $async.Future<$0.FileDto> fetchAvatar($grpc.ServiceCall call, $0.FileDto request);
+  $async.Future<$0.ResponseDto> deleteAvatar($grpc.ServiceCall call, $0.FileDto request);
 }

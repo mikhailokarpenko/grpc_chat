@@ -29,18 +29,6 @@ final $typed_data.Uint8List fileDtoDescriptor = $convert.base64Decode(
     'CgdGaWxlRHRvEhIKBGRhdGEYASABKAxSBGRhdGESEgoEbmFtZRgCIAEoCVIEbmFtZRIWCgZidW'
     'NrZXQYAyABKAlSBmJ1Y2tldBIQCgN0YWcYBCABKAlSA3RhZw==');
 
-@$core.Deprecated('Use avatarDtoDescriptor instead')
-const AvatarDto$json = {
-  '1': 'AvatarDto',
-  '2': [
-    {'1': 'data', '3': 1, '4': 1, '5': 12, '10': 'data'},
-  ],
-};
-
-/// Descriptor for `AvatarDto`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List avatarDtoDescriptor = $convert.base64Decode(
-    'CglBdmF0YXJEdG8SEgoEZGF0YRgBIAEoDFIEZGF0YQ==');
-
 @$core.Deprecated('Use responseDtoDescriptor instead')
 const ResponseDto$json = {
   '1': 'ResponseDto',
