@@ -1,0 +1,10 @@
+syntax="proto3";
+
+service FilesRpc {
+}
+
+message RequestDto {}
+
+message ResponseDto {
+    string message = 1;
+}
