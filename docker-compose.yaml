@@ -36,6 +36,21 @@ services:
       DB_PASSWORD: ${db_password_chats}
       DB_SSL: ${db_use_ssl}
 
+  files:
+    container_name: 'files'
+    build: ./files
+    depends_on:
+      - minio
+    networks:
+      - server_net
+    environment:
+      SK: ${sk}
+      files_access_key: ${files_access_key}
+      files_secret_key: ${files_secret_key}
+      files_use_ssl: ${files_use_ssl}
+      files_storage_port: ${files_storage_port}
+      files_storage_host: ${files_storage_host}
+
   db_auth:
     container_name: db_auth
     ports:
@@ -89,7 +104,6 @@ services:
       - MINIO_ROOT_PASSWORD=${files_secret_key}
     ports:
       - 9001:9001
-      - 9000:9000
     networks:
       - server_net
     volumes:
