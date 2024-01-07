@@ -17,9 +17,21 @@ final class FilesRpc extends FilesRpcServiceBase {
   }
 
   @override
-  Future<ResponseDto> deleteFile(ServiceCall call, FileDto request) {
-    // TODO: implement deleteFile
-    throw UnimplementedError();
+  Future<ResponseDto> deleteFile(ServiceCall call, FileDto request) async {
+    if (request.bucket.isEmpty) {
+      throw GrpcError.invalidArgument('Bucket argument is empty');
+    }
+    if (request.name.isEmpty) {
+      throw GrpcError.invalidArgument('Name argument is empty');
+    }
+
+    try {
+      final String message =
+          await storage.deleteFile(bucket: request.bucket, name: request.name);
+      return ResponseDto(isComplete: true, message: message);
+    } on Object catch (e) {
+      throw GrpcError.internal('Delete file is error $e');
+    }
   }
 
   @override

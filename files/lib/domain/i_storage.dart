@@ -6,4 +6,9 @@ abstract interface class IStorage {
     required String name,
     required Uint8List data,
   });
+
+  Future<String> deleteFile({
+    required String bucket,
+    required String name,
+  });
 }

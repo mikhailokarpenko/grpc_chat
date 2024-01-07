@@ -1,7 +1,9 @@
+import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:files/domain/i_storage.dart';
 import 'package:files/env.dart';
+import 'package:grpc/grpc.dart';
 import 'package:minio/minio.dart';
 
 final class MinioStorage implements IStorage {
@@ -25,11 +27,29 @@ final class MinioStorage implements IStorage {
       if (!await minio.bucketExists(bucket)) {
         minio.makeBucket(bucket);
       }
-      final tag =
-          await minio.putObject(bucket, name, Stream<Uint8List>.value(data));
-      return tag;
+      return await Isolate.run(() => _putFile(bucket, name, data));
     } on Object catch (_) {
       rethrow;
     }
+  }
+
+  Future<String> _putFile(String bucket, String name, Uint8List data) async {
+    final tag =
+        await minio.putObject(bucket, name, Stream<Uint8List>.value(data));
+    return tag;
+  }
+
+  @override
+  Future<String> deleteFile(
+      {required String bucket, required String name}) async {
+    if (!await minio.bucketExists(bucket)) {
+      throw GrpcError.notFound('Bucker $bucket not found');
+    }
+    return await Isolate.run(() => _deleteFile(bucket, name));
+  }
+
+  Future<String> _deleteFile(String bucket, String name) async {
+    await minio.removeObject(bucket, name);
+    return 'file deleted';
   }
 }
