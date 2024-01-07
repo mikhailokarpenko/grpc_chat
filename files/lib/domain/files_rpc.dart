@@ -13,9 +13,14 @@ final class FilesRpc extends FilesRpcServiceBase {
   FilesRpc(this.storage);
 
   @override
-  Future<ResponseDto> deleteAvatar(ServiceCall call, FileDto request) {
-    // TODO: implement deleteAvatar
-    throw UnimplementedError();
+  Future<ResponseDto> deleteAvatar(ServiceCall call, FileDto request) async {
+    try {
+      final userId = Utils.getIdFromMetadata(call);
+      await storage.deleteFile(bucket: 'avatars', name: userId.toString());
+      return ResponseDto(isComplete: true, message: 'Avatar deleted');
+    } on Object catch (e) {
+      throw GrpcError.internal('Avatar is not deleted $e');
+    }
   }
 
   @override
@@ -50,7 +55,7 @@ final class FilesRpc extends FilesRpcServiceBase {
           sink.add(FileDto(data: arr));
         },
       ));
-    } catch (e) {
+    } on Object catch (e) {
       throw GrpcError.internal('Fetch file failed with error: $e');
     }
   }
@@ -78,7 +83,7 @@ final class FilesRpc extends FilesRpcServiceBase {
         data: request.data as Uint8List,
       );
       return ResponseDto(isComplete: true, message: 'Avatar updated', tag: tag);
-    } catch (e) {
+    } on Object catch (e) {
       throw GrpcError.internal('Avatar not updated $e');
     }
   }
@@ -94,7 +99,7 @@ final class FilesRpc extends FilesRpcServiceBase {
           name: request.name,
           data: request.data as Uint8List);
       return ResponseDto(isComplete: true, tag: tag, message: 'File added');
-    } catch (e) {
+    } on Object catch (e) {
       throw GrpcError.internal('File not added $e');
     }
   }
