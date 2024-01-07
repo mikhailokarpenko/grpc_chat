@@ -1,114 +1,63 @@
-// import 'dart:async';
-// import 'dart:isolate';
+import 'dart:typed_data';
 
-// import 'package:chats/data/chat/chat.dart';
-// import 'package:chats/data/db.dart';
-// import 'package:chats/data/message/message.dart';
-// import 'package:chats/generated/chats.pbgrpc.dart';
-// import 'package:chats/utils.dart';
-// import 'package:grpc/grpc.dart';
-// import 'package:grpc/src/server/call.dart';
-// import 'package:protobuf/protobuf.dart';
-// import 'package:stormberry/stormberry.dart';
+import 'package:files/domain/i_storage.dart';
+import 'package:files/generated/files.pbgrpc.dart';
+import 'package:grpc/grpc.dart';
+import 'package:grpc/src/server/call.dart';
 
-// class ChatRpc extends ChatsRpcServiceBase {
-//   final StreamController<MessageDto> _streamController =
-//       StreamController.broadcast();
-//   @override
-//   Future<ResponseDto> createChat(ServiceCall call, ChatDto request) async {
-//     final id = Utils.getIdFromMetadata(call);
-//     if (request.name.isEmpty) {
-//       throw GrpcError.invalidArgument('Chat name is empty');
-//     }
-//     if (request.memberId.isEmpty) {
-//       throw GrpcError.invalidArgument('Member id is empty');
-//     }
-//     await db.chats.insertOne(ChatInsertRequest(
-//         name: request.name,
-//         authorId: id.toString(),
-//         memberId: request.memberId));
-//     return ResponseDto(message: 'Chat created');
-//   }
+final class FilesRpc extends FilesRpcServiceBase {
+  final IStorage storage;
 
-//   @override
-//   Future<ResponseDto> deleteChat(ServiceCall call, ChatDto request) async {
-//     final authorId = Utils.getIdFromMetadata(call);
-//     final chatId = int.tryParse(request.id);
-//     if (chatId == null) throw GrpcError.invalidArgument('Chat id invalid');
-//     final chat = await db.chats.queryShortView(chatId);
-//     if (chat == null) throw GrpcError.notFound('Chat not found');
-//     if (chat.authorId != authorId.toString()) {
-//       throw GrpcError.permissionDenied('Only author can delete chat');
-//     } else {
-//       await db.chats.deleteOne(chatId);
-//       return ResponseDto(message: 'Chat deleted');
-//     }
-//   }
+  FilesRpc(this.storage);
 
-//   @override
-//   Future<ResponseDto> deleteMessage(
-//       ServiceCall call, MessageDto request) async {
-//     final messageId = int.tryParse(request.id);
-//     if (messageId == null) {
-//       throw GrpcError.invalidArgument('Message id invalid');
-//     }
-//     final message = await db.messages.queryMessage(messageId);
-//     if (message == null) throw GrpcError.notFound('Message not found');
-//     final userId = Utils.getIdFromMetadata(call);
-//     if (message.authorId == userId.toString()) {
-//       await db.messages.deleteOne(messageId);
-//       return ResponseDto(message: 'Message deleted');
-//     } else {
-//       throw GrpcError.permissionDenied('Only author can delete the message');
-//     }
-//   }
+  @override
+  Future<ResponseDto> deleteAvatar(ServiceCall call, AvatarDto request) {
+    // TODO: implement deleteAvatar
+    throw UnimplementedError();
+  }
 
-//   @override
-//   Future<ListChatsDto> fetchAllChats(
-//       ServiceCall call, RequestDto request) async {
-//     final id = Utils.getIdFromMetadata(call);
-//     final listChats = await db.chats.queryShortViews(QueryParams(
-//         where: "author_id=@author_id OR member_id=@member_id",
-//         values: {'author_id': id, 'member_id': id}));
-//     if (listChats.isEmpty) return ListChatsDto(chats: []);
-//     return await Isolate.run(() => Utils.convertChats(listChats));
-//   }
+  @override
+  Future<ResponseDto> deleteFile(ServiceCall call, FileDto request) {
+    // TODO: implement deleteFile
+    throw UnimplementedError();
+  }
 
-//   @override
-//   Future<ChatDto> fetchChat(ServiceCall call, ChatDto request) async {
-//     final chatId = int.tryParse(request.id);
-//     if (chatId == null) throw GrpcError.invalidArgument('Chat id invalid');
-//     final chat = await db.chats.queryFullView(chatId);
-//     if (chat == null) throw GrpcError.notFound('Chat not found');
-//     final userId = Utils.getIdFromMetadata(call);
-//     if (chat.authorId == userId.toString() ||
-//         chat.memberId == userId.toString()) {
-//       return await Isolate.run(() => Utils.convertChatDto(chat));
-//     } else {
-//       throw GrpcError.permissionDenied();
-//     }
-//   }
+  @override
+  Future<AvatarDto> fetchAvatar(ServiceCall call, AvatarDto request) {
+    // TODO: implement fetchAvatar
+    throw UnimplementedError();
+  }
 
-//   @override
-//   Stream<MessageDto> listenChat(ServiceCall call, ChatDto request) async* {
-//     if (request.id.isEmpty) throw GrpcError.invalidArgument('Chat id is empty');
-//     yield* _streamController.stream
-//         .where((event) => event.chatId == request.id);
-//   }
+  @override
+  Future<FileDto> fetchFile(ServiceCall call, FileDto request) {
+    // TODO: implement fetchFile
+    throw UnimplementedError();
+  }
 
-//   @override
-//   Future<ResponseDto> sendMessage(ServiceCall call, MessageDto request) async {
-//     final authorId = Utils.getIdFromMetadata(call);
-//     final chatId = int.tryParse(request.chatId);
-//     if (chatId == null) throw GrpcError.invalidArgument('Chat id invalid');
-//     final chat = await db.chats.queryShortView(chatId);
-//     if (chat == null) throw GrpcError.notFound('Chat not found');
-//     if (request.body.isEmpty) throw GrpcError.invalidArgument('Body is empty');
-//     final id = await db.messages.insertOne(MessageInsertRequest(
-//         body: request.body, authorId: authorId.toString(), chatId: chatId));
-//     _streamController.add(request.deepCopy()
-//       ..authorId = authorId.toString()
-//       ..id = id.toString());
-//     return ResponseDto(message: 'Message sent');
-//   }
-// }
+  @override
+  Future<ResponseDto> putAvatar(ServiceCall call, AvatarDto request) {
+    // TODO: implement putAvatar
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ResponseDto> putFile(ServiceCall call, FileDto request) async {
+    if (request.bucket.isEmpty) {
+      throw GrpcError.invalidArgument('Bucket argument is empty');
+    }
+    if (request.name.isEmpty) {
+      throw GrpcError.invalidArgument('Name argument is empty');
+    }
+    if (request.data.isEmpty) throw GrpcError.invalidArgument('File is empty');
+
+    try {
+      final tag = await storage.putFile(
+          bucket: request.bucket,
+          name: request.name,
+          data: request.data as Uint8List);
+      return ResponseDto(isComplete: true, tag: tag, message: 'File added');
+    } catch (e) {
+      throw GrpcError.internal('File not added $e');
+    }
+  }
+}
