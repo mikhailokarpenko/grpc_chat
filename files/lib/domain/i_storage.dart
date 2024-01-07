@@ -11,4 +11,9 @@ abstract interface class IStorage {
     required String bucket,
     required String name,
   });
+
+  Stream<List<int>> fetchFile({
+    required String bucket,
+    required String name,
+  });
 }

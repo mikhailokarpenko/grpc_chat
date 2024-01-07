@@ -2,7 +2,7 @@ syntax="proto3";
 
 service FilesRpc {
     rpc PutFile (FileDto) returns (ResponseDto);
-    rpc FetchFile (FileDto) returns (FileDto);
+    rpc FetchFile (FileDto) returns (stream FileDto);
     rpc DeleteFile (FileDto) returns (ResponseDto);
 
     rpc PutAvatar (AvatarDto) returns (ResponseDto);

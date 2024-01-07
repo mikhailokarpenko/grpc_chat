@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:files/domain/i_storage.dart';
@@ -18,12 +19,7 @@ final class FilesRpc extends FilesRpcServiceBase {
 
   @override
   Future<ResponseDto> deleteFile(ServiceCall call, FileDto request) async {
-    if (request.bucket.isEmpty) {
-      throw GrpcError.invalidArgument('Bucket argument is empty');
-    }
-    if (request.name.isEmpty) {
-      throw GrpcError.invalidArgument('Name argument is empty');
-    }
+    _checkFields(request);
 
     try {
       final String message =
@@ -41,9 +37,30 @@ final class FilesRpc extends FilesRpcServiceBase {
   }
 
   @override
-  Future<FileDto> fetchFile(ServiceCall call, FileDto request) {
-    // TODO: implement fetchFile
-    throw UnimplementedError();
+  Stream<FileDto> fetchFile(ServiceCall call, FileDto request) async* {
+    _checkFields(request);
+
+    try {
+      yield* storage
+          .fetchFile(bucket: request.bucket, name: request.name)
+          .transform(StreamTransformer.fromHandlers(
+        handleData: (data, sink) {
+          final arr = Uint8List.fromList(data);
+          sink.add(FileDto(data: arr));
+        },
+      ));
+    } catch (e) {
+      throw GrpcError.internal('Fetch file failed with error: $e');
+    }
+  }
+
+  void _checkFields(FileDto request) {
+    if (request.bucket.isEmpty) {
+      throw GrpcError.invalidArgument('Bucket argument is empty');
+    }
+    if (request.name.isEmpty) {
+      throw GrpcError.invalidArgument('Name argument is empty');
+    }
   }
 
   @override
@@ -54,12 +71,7 @@ final class FilesRpc extends FilesRpcServiceBase {
 
   @override
   Future<ResponseDto> putFile(ServiceCall call, FileDto request) async {
-    if (request.bucket.isEmpty) {
-      throw GrpcError.invalidArgument('Bucket argument is empty');
-    }
-    if (request.name.isEmpty) {
-      throw GrpcError.invalidArgument('Name argument is empty');
-    }
+    _checkFields(request);
     if (request.data.isEmpty) throw GrpcError.invalidArgument('File is empty');
 
     try {
